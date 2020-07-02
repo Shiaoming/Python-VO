@@ -41,7 +41,9 @@ class FrameByFrameMatcher(object):
             matches = self.matcher.match(desc["ref"], desc["cur"])
             # Sort them in the order of their distance.
             matches = sorted(matches, key=lambda x: x.distance)
-            self.good = matches[:self.config["KNN"]["first_N"]]
+            # self.good = matches[:self.config["KNN"]["first_N"]]
+            for i in range(self.config["KNN"]["first_N"]):
+                self.good.append([matches[i]])
         else:
             matches = self.matcher.knnMatch(desc["ref"], desc["cur"], k=2)
             # Apply ratio test
@@ -51,16 +53,10 @@ class FrameByFrameMatcher(object):
         return self.good
 
     def draw_matches(self, imgs, kpts):
-        if self.matcher_type == "KNN" and self.config["KNN"]["HAMMING"]:
-            img = cv2.drawMatches(imgs["ref"], kpts["ref"],
-                                  imgs["cur"], kpts["cur"],
-                                  good, None,
-                                  flags=cv2.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS)
-        else:
-            img = cv2.drawMatchesKnn(imgs["ref"], kpts["ref"],
-                                     imgs["cur"], kpts["cur"],
-                                     good, None,
-                                     flags=cv2.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS)
+        img = cv2.drawMatchesKnn(imgs["ref"], kpts["ref"],
+                                 imgs["cur"], kpts["cur"],
+                                 self.good, None,
+                                 flags=cv2.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS)
         return img
 
 
