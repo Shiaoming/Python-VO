@@ -46,8 +46,8 @@ class VisualOdometry(object):
         # first frame
         if self.index == 0:
             # save keypoints and descriptors
-            self.kpts["ref"] = kpts
-            self.desc["ref"] = desc
+            self.kpts["cur"] = kpts
+            self.desc["cur"] = desc
 
             # start point
             self.cur_R = np.identity(3)
@@ -73,6 +73,9 @@ class VisualOdometry(object):
             # save keypoints and descriptors
             self.kpts["ref"] = kpts
             self.desc["ref"] = desc
+
+        self.kpts["ref"] = self.kpts["cur"]
+        self.desc["ref"] = self.desc["cur"]
 
         self.index += 1
         return self.cur_R, self.cur_t
