@@ -1,5 +1,5 @@
 ## Python-VO
-A simple python implemented visual odometry.
+A simple python implemented visual odometry. This project is inspired and based on [superpoint-vo](https://github.com/syinari0123/SuperPoint-VO) and [monoVO-python](https://github.com/uoip/monoVO-python).
 
 **SIFT Features on KITTI**
 
