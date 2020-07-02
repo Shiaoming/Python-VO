@@ -58,7 +58,7 @@ class HandcraftDetector(object):
 
 
 if __name__ == "__main__":
-    img0 = cv2.imread("../test_imgs/000000.png")
+    img0 = cv2.imread("../test_imgs/sequences/00/image_0/000000.png")
 
     orb_detector = HandcraftDetector('SIFT')
     kpts, desc = orb_detector.detect(img0)
