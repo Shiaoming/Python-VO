@@ -1,4 +1,5 @@
 import cv2
+import numpy as np
 import glob
 from tqdm import tqdm
 
@@ -28,13 +29,23 @@ class KITTILoader(object):
 
         # read ground truth pose
         self.pose_path = self.config['root_path'] + '/poses/' + self.config['sequence'] + '.txt'
+        self.gt_poses = []
         with open(self.pose_path) as f:
-            self.pose_gt = f.readlines()
+            lines = f.readlines()
+            for line in lines:
+                ss = line.strip().split()
+                pose = np.zeros((1, len(ss)))
+                for i in range(len(ss)):
+                    pose[0, i] = float(ss[i])
+                self.gt_poses.append(pose)
 
         # image id
         self.img_id = self.config['start']
         self.img_N = len(glob.glob(pathname=self.config['root_path'] + '/sequences/' \
                                             + self.config['sequence'] + '/image_0/*.png'))
+
+    def get_cur_pose(self):
+        return self.gt_poses[self.img_id - 1]
 
     def __getitem__(self, item):
         file_name = self.config['root_path'] + '/sequences/' + self.config['sequence'] \
