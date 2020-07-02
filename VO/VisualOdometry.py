@@ -34,7 +34,7 @@ class VisualOdometry(object):
         self.cur_R = None
         self.cur_t = None
 
-    def update(self, image, absolute_scale):
+    def update(self, image, absolute_scale=1):
         """
         update a new image to visual odometry, and compute the pose
         :param image: input image
@@ -46,8 +46,8 @@ class VisualOdometry(object):
         # first frame
         if self.index == 0:
             # save keypoints and descriptors
-            self.kpts['ref'] = kpts
-            self.desc['ref'] = desc
+            self.kpts["ref"] = kpts
+            self.desc["ref"] = desc
 
             # start point
             self.cur_R = np.identity(3)
@@ -55,8 +55,8 @@ class VisualOdometry(object):
             return
         else:
             # update keypoints and descriptors
-            self.kpts['cur'] = kpts
-            self.desc['cur'] = desc
+            self.kpts["cur"] = kpts
+            self.desc["cur"] = desc
 
             # match keypoints
             px_ref, px_cur = self.matcher(self.kpts, self.desc)
@@ -72,7 +72,7 @@ class VisualOdometry(object):
                 self.cur_R = R.dot(self.cur_R)
 
             # save keypoints and descriptors
-            self.kpts['ref'] = kpts
-            self.desc['ref'] = desc
+            self.kpts["ref"] = kpts
+            self.desc["ref"] = desc
 
         return self.cur_R, self.cur_t
