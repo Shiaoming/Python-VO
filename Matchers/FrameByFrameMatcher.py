@@ -59,6 +59,21 @@ class FrameByFrameMatcher(object):
                                  flags=cv2.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS)
         return img
 
+    def get_good_keypoints(self, kpts):
+        kp_ref = np.zeros([len(self.good), 2])
+        kp_cur = np.zeros([len(self.good), 2])
+        for i, m in enumerate(self.good):
+            kp_ref[i, 0] = kpts["ref"][m[0].queryIdx].pt[0]
+            kp_ref[i, 1] = kpts["ref"][m[0].queryIdx].pt[1]
+            kp_cur[i, 0] = kpts["cur"][m[0].trainIdx].pt[0]
+            kp_cur[i, 1] = kpts["cur"][m[0].trainIdx].pt[1]
+        return kp_ref, kp_cur
+
+    def get_matched_keypoints(self, kpts, desc):
+        self.match(desc)
+        kp_ref, kp_cur = self.get_good_keypoints(kpts)
+        return kp_ref, kp_cur
+
 
 if __name__ == "__main__":
     from DataLoader.KITTILoader import KITTILoader
