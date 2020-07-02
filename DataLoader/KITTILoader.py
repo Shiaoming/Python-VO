@@ -37,6 +37,8 @@ class KITTILoader(object):
                 pose = np.zeros((1, len(ss)))
                 for i in range(len(ss)):
                     pose[0, i] = float(ss[i])
+
+                pose.resize([3, 4])
                 self.gt_poses.append(pose)
 
         # image id

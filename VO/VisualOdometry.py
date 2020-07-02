@@ -52,7 +52,6 @@ class VisualOdometry(object):
             # start point
             self.cur_R = np.identity(3)
             self.cur_t = np.zeros((3, 1))
-            return
         else:
             # update keypoints and descriptors
             self.kpts["cur"] = kpts
@@ -75,4 +74,42 @@ class VisualOdometry(object):
             self.kpts["ref"] = kpts
             self.desc["ref"] = desc
 
+        self.index += 1
         return self.cur_R, self.cur_t
+
+
+class AbosluteScaleComputer(object):
+    def __init__(self):
+        self.prev_pose = None
+        self.cur_pose = None
+        self.count = 0
+
+    def update(self, pose):
+        self.cur_pose = pose
+
+        scale = 1.0
+        if self.count != 0:
+            scale = np.sqrt(
+                (self.cur_pose[0, 3] - self.prev_pose[0, 3]) * (self.cur_pose[0, 3] - self.prev_pose[0, 3])
+                + (self.cur_pose[1, 3] - self.prev_pose[1, 3]) * (self.cur_pose[1, 3] - self.prev_pose[1, 3])
+                + (self.cur_pose[2, 3] - self.prev_pose[2, 3]) * (self.cur_pose[2, 3] - self.prev_pose[2, 3]))
+
+        self.count += 1
+        self.prev_pose = self.cur_pose
+        return scale
+
+
+if __name__ == "__main__":
+    from DataLoader.KITTILoader import KITTILoader
+    from Detectors.HandcraftDetector import HandcraftDetector
+    from Matchers.FrameByFrameMatcher import FrameByFrameMatcher
+
+    loader = KITTILoader()
+    detector = HandcraftDetector("ORB")
+    matcher = FrameByFrameMatcher("KNN")
+    absscale = AbosluteScaleComputer()
+
+    vo = VisualOdometry(detector.detect, matcher.get_matched_keypoints, loader.cam)
+    for i, img in enumerate(loader):
+        gt_pose = loader.get_cur_pose()
+        R, t = vo.update(img, absscale.update(gt_pose))
