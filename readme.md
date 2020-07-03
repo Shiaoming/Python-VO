@@ -19,7 +19,7 @@ For feature matchers, we tested the KNN and FLANN mathers implemented in OpenCV,
 
 ## Install
 
-- Get this 
+- Get this repository
     ```bash
     git clone https://github.com/Shiaoming/Python-VO.git
     cd Python-VO
