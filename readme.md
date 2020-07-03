@@ -17,6 +17,15 @@ For feature matchers, we tested the KNN and FLANN mathers implemented in OpenCV,
 
 ![sift_keypoints](screenshots/sift_keypoints.png)
 
+## Run
+1. edit dataset path in `params/*.yaml`;
+2. run `python main.py --config params/*.yaml` in terminal.
+    
+   For example, to evaluate the SuperPoint with SuperGlue, run:
+   ```bash
+   python mian.py --config params/kitti_superpoint_supergluematch.yaml
+   ``` 
+
 ## Evaluations
 **Absolute and relative translation errors on KITTI sequence 00**
 ![eval](results/eval.png)
