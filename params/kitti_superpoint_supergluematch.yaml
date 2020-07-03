@@ -1,0 +1,22 @@
+dataset:
+  type: kitti
+  root_path: "/mnt/data/datasets/public/KITTI/KITTI/odometry"
+  sequence: "00"
+  start: 0
+
+detector:
+  type: SuperPoint
+  descriptor_dim: 256
+  nms_radius: 4
+  keypoint_threshold: 0.005
+  max_keypoints: -1
+  remove_borders: 4
+  cuda: 1
+
+matcher:
+  type: SuperGlue
+  descriptor_dim: 256
+  weights: "outdoor"
+  sinkhorn_iterations: 100
+  match_threshold: 0.2
+  cuda: 1

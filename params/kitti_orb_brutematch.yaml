@@ -1,0 +1,24 @@
+dataset:
+  type: kitti
+  root_path: "/mnt/data/datasets/public/KITTI/KITTI/odometry"
+  sequence: "00"
+  start: 0
+
+detector:
+  type: ORB
+  ORB:
+    nfeatures: 1000
+    scaleFactor: 1.2
+    nLevels: 8
+    edgeThreshold: 31
+    firstLevel: 0
+    WTA_K: 2
+    patchSize: 31
+    fastThreshold: 2
+
+matcher:
+  type: KNN
+  KNN:
+    HAMMING: True  # For ORB Binary descriptor, only can use hamming matching
+    first_N: 300 # For hamming matching, use first N min matches
+  distance_ratio: 0.75

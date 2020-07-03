@@ -1,0 +1,21 @@
+dataset:
+  type: kitti
+  root_path: "/mnt/data/datasets/public/KITTI/KITTI/odometry"
+  sequence: "00"
+  start: 0
+
+detector:
+  type: SIFT
+  SIFT:
+    nfeatures: 1000
+    nOctaveLayers: 3
+    contrastThreshold: 0.04
+    edgeThreshold: 10
+    sigma: 1.6
+
+matcher:
+  type: FLANN
+  FLANN:
+    kdTrees: 5
+    searchChecks: 50
+  distance_ratio: 0.75

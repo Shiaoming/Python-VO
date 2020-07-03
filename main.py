@@ -1,10 +1,16 @@
 import numpy as np
 import cv2
+import argparse
+import yaml
+import logging
+
 from utils.tools import plot_keypoints
 
 from DataLoader.KITTILoader import KITTILoader
 from Detectors.HandcraftDetector import HandcraftDetector
+from Detectors.SuperPointDetector import SuperPointDetector
 from Matchers.FrameByFrameMatcher import FrameByFrameMatcher
+from Matchers.SuperGlueMatcher import SuperGlueMather
 from VO.VisualOdometry import VisualOdometry, AbosluteScaleComputer
 
 
@@ -51,25 +57,48 @@ class TrajPlotter(object):
         return self.traj
 
 
-def run():
-    kitti_config = {
-        # "root_path": "./test_imgs",
-        "root_path": "/mnt/data/datasets/public/KITTI/KITTI/odometry",
-        "sequence": "00",
-        "start": 0
-    }
+def run(args):
+    with open(args.config, 'r') as f:
+        config = yaml.load(f)
 
-    loader = KITTILoader(kitti_config)
-    detector = HandcraftDetector("SIFT")
-    matcher = FrameByFrameMatcher("FLANN")
+    # create dataloader
+    if config["dataset"]["type"] == "kitti":
+        loader = KITTILoader(config["dataset"])
+    else:
+        raise NotImplementedError
+
+    # create detector
+    if config["detector"]["type"] == "ORB" or config["detector"]["type"] == "SIFT":
+        detector = HandcraftDetector(config["detector"])
+    elif config["detector"]["type"] == "SuperPoint":
+        detector = SuperPointDetector(config["detector"])
+    else:
+        raise NotImplementedError
+
+    # create matcher
+    if config["matcher"]["type"] == "KNN" or config["matcher"]["type"] == "FLANN":
+        matcher = FrameByFrameMatcher(config["matcher"])
+    elif config["matcher"]["type"] == "SuperGlue":
+        matcher = SuperGlueMather(config["matcher"])
+    else:
+        raise NotImplementedError
+
     absscale = AbosluteScaleComputer()
     traj_plotter = TrajPlotter()
+
+    # log
+    fname = args.config.split('/')[-1].split('.')[0]
+    log_fopen = open("results/" + fname + ".txt", mode='a')
 
     vo = VisualOdometry(detector, matcher, loader.cam)
     for i, img in enumerate(loader):
         gt_pose = loader.get_cur_pose()
         R, t = vo.update(img, absscale.update(gt_pose))
 
+        # === log writer ==============================
+        print(i, t[0, 0], t[1, 0], t[2, 0], gt_pose[0, 3], gt_pose[1, 3], gt_pose[2, 3], file=log_fopen)
+
+        # === drawer ==================================
         img1 = keypoints_plot(img, vo)
         img2 = traj_plotter.update(t, gt_pose[:, 3])
 
@@ -78,6 +107,18 @@ def run():
         if cv2.waitKey(10) == 27:
             break
 
+    cv2.imwrite("results/" + fname + '.png', img2)
+
 
 if __name__ == "__main__":
-    run()
+    parser = argparse.ArgumentParser(description='python_vo')
+    parser.add_argument('--config', type=str, default='params/kitti_superpoint_supergluematch.yaml',
+                        help='config file')
+    parser.add_argument('--logging', type=str, default='INFO',
+                        help='logging level: NOTSET, DEBUG, INFO, WARNING, ERROR, CRITICAL')
+
+    args = parser.parse_args()
+
+    logging.basicConfig(level=logging._nameToLevel[args.logging])
+
+    run(args)
