@@ -25,9 +25,9 @@ For feature matchers, we tested the KNN and FLANN mathers implemented in OpenCV,
     cd Python-VO
     ``` 
   
-- Install pacakges
+- Install python packages
     ```bash
-    pip  install -r requirements.txt
+    pip install -r requirements.txt
     ```
 
 - Build and install OpenCV from source with opencv-contrib and flag `OPENCV_ENABLE_NONFREE=True`
@@ -60,18 +60,26 @@ python main.py --config params/kitti_superpoint_supergluematch.yaml
 | :------------: | :-------------------: | :-------------------: | :-----------------------: |
 |     0.748m     |        0.085m         |        0.177m         |          0.103m           |
 
-**ORB with brute match on KITTI sequence 00**
+**Trajectory of ORB feature with brute matcher on KITTI sequence 00**
 
 ![kitti_orb_brutematch](results/kitti_orb_brutematch.png)
+- red: ground truth
+- green: estimated trajectory
 
-**SIFT with FLANN match on KITTI sequence 00**
+**Trajectory of SIFT feature with FLANN matcher on KITTI sequence 00**
 
 ![kitti_sift_flannmatch](results/kitti_sift_flannmatch.png)
+- red: ground truth
+- green: estimated trajectory
 
-**SuperPoint with FLANN match on KITTI sequence 00**
+**Trajectory of SuperPoint feature with FLANN matcher on KITTI sequence 00**
 
 ![kitti_superpoint_flannmatch](results/kitti_superpoint_flannmatch.png)
+- red: ground truth
+- green: estimated trajectory
 
-**SuperPoint with SuperGlue match on KITTI sequence 00**
+**Trajectory of SuperPoint feature with SuperGlue matcher on KITTI sequence 00**
 
 ![kitti_superpoint_supergluematch](results/kitti_superpoint_supergluematch.png)
+- red: ground truth
+- green: estimated trajectory
