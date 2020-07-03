@@ -11,8 +11,8 @@ A simple python implemented visual odometry. This project is inspired and based 
 
 **TODO:**
 - [x] frame by frame match vo.
-- [ ] SuperPoint Feature detector.
-- [ ] SuperGlue Feature matcher.
+- [x] SuperPoint Feature detector.
+- [x] SuperGlue Feature matcher.
 
 
 - [ ] optical flow based feature track vo.
