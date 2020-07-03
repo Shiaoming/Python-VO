@@ -1,23 +1,44 @@
 ## Python-VO
-A simple python implemented visual odometry. This project is inspired and based on [superpoint-vo](https://github.com/syinari0123/SuperPoint-VO) and [monoVO-python](https://github.com/uoip/monoVO-python).
+A simple python implemented frame by frame visual odometry. This project is inspired and based on [superpoint-vo](https://github.com/syinari0123/SuperPoint-VO) and [monoVO-python](https://github.com/uoip/monoVO-python).
 
-**SIFT Features on KITTI**
+**Feature detectors**
+- ORB (OpenCV implementation)
+- SIFT (OpenCV implementation)
+- [SuperPoint](https://github.com/magicleap/SuperPointPretrainedNetwork) 
+
+**Feature matchers**
+- KNN, FLANN (OpenCV implementation)
+- [SuperGlue](https://github.com/magicleap/SuperGluePretrainedNetwork)
+
+**SIFT Keypoints on KITTI**
 
 ![sift_keypoints](screenshots/sift_keypoints.png)
 
-**frame by frame track with SIFT Features on KITTI**
+## Evaluations
+**Overall evaluation on KITTI sequence 00**
+![eval](results/eval.png)
 
-![sift_trajectory](screenshots/sift_trajectory.png)
+**Overall relative errors on KITTI sequence 00**
 
-**TODO:** 
-- [x] frame by frame match vo.
-- [x] SuperPoint Feature detector.
-- [x] SuperGlue Feature matcher.
+| orb_brutematch |     sift_flannmatch | superpoint_flannmatch | superpoint_supergluematch |
+| :------------: | :-------------------: | :-------------------: | :-----------------------: |
+|     0.748m     |        0.085m         |        0.177m         |          0.103m           |
 
+**ORB with brute match on KITTI sequence 00**
 
-- [ ] optical flow based feature track vo.
+![kitti_orb_brutematch](results/kitti_orb_brutematch.png)
 
-- [ ] evaluations
+**SIFT with FLANN match on KITTI sequence 00**
+
+![kitti_sift_flannmatch](results/kitti_sift_flannmatch.png)
+
+**SuperPoint with FLANN match on KITTI sequence 00**
+
+![kitti_superpoint_flannmatch](results/kitti_superpoint_flannmatch.png)
+
+**SuperPoint with SuperGlue match on KITTI sequence 00**
+
+![kitti_superpoint_supergluematch](results/kitti_superpoint_supergluematch.png)
 
 ## Note
-to use SIFT, opencv-python are built from source with opencv-contrib support (with OPENCV_ENABLE_NONFREE=ture)
+To use SIFT, opencv-python must be built from source with opencv-contrib support (with OPENCV_ENABLE_NONFREE=ture)
