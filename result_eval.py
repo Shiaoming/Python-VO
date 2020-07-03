@@ -26,17 +26,41 @@ def main():
     configs = [f.split('/')[-1].split('.')[0] for f in files]
     logs = [read_log(f) for f in files]
 
+    # log output
+    log_fopen = open("results/relative_errors", mode='w')
+    print(configs, file=log_fopen)
+
+    # plot
     figure = plt.figure()
     for log, config_name in zip(logs, configs):
         id, est_xyz, gt_xyz = log[0], log[1], log[2]
 
-        error = np.linalg.norm((est_xyz - gt_xyz), axis=1)
-        avg_error = [np.mean(error[:i]) for i in range(len(error))]
+        errors = np.linalg.norm((est_xyz - gt_xyz), axis=1)
+        avg_error = [np.mean(errors[:i]) for i in range(len(errors))]
 
+        relative_errors = np.zeros((est_xyz.shape[0] - 1))
+        for i in range(est_xyz.shape[0]):
+            if i > 0:
+                relative_est_xyz = est_xyz[i, :] - est_xyz[i - 1, :]
+                relative_gt_xyz = gt_xyz[i, :] - gt_xyz[i - 1, :]
+                relative_errors[i - 1] = np.linalg.norm((relative_est_xyz - relative_gt_xyz))
+
+        plt.subplot(2, 1, 1)
         plt.plot(id, avg_error, label=config_name)
 
-    plt.xlabel("Timestamp")
+        plt.subplot(2, 1, 2)
+        plt.plot(id[1:], relative_errors, label=config_name)
+
+        print(relative_errors.mean(), end=' ', file=log_fopen)
+
+    plt.subplot(2, 1, 1)
+    plt.xlabel("FrameIndex")
     plt.ylabel("Avg Distance Error [m]")
+    plt.legend()
+
+    plt.subplot(2, 1, 2)
+    plt.xlabel("FrameIndex")
+    plt.ylabel("Relative Distance Error [m]")
     plt.legend()
 
     plt.show()

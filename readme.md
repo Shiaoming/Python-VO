@@ -9,7 +9,7 @@ A simple python implemented visual odometry. This project is inspired and based 
 
 ![sift_trajectory](screenshots/sift_trajectory.png)
 
-**TODO:**
+**TODO:** 
 - [x] frame by frame match vo.
 - [x] SuperPoint Feature detector.
 - [x] SuperGlue Feature matcher.
