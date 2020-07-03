@@ -30,6 +30,7 @@ class SuperPointDetector(object):
         pred = self.superpoint({'image': image_tensor})
 
         ret_dict = {
+            "image_size": np.array([image.shape[0], image.shape[1]]),
             "torch": pred,
             "keypoints": pred["keypoints"][0].cpu().detach().numpy(),
             "scores": pred["scores"][0].cpu().detach().numpy(),

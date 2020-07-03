@@ -61,7 +61,8 @@ class HandcraftDetector(object):
             kpts[i, 1] = p.pt[1]
             scores[i] = p.response
 
-        return {"keypoints": kpts,
+        return {"image_size": np.array([image.shape[0], image.shape[1]]),
+                "keypoints": kpts,
                 "scores": scores,
                 "descriptors": desc}
 
