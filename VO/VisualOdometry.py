@@ -112,7 +112,7 @@ if __name__ == "__main__":
     matcher = FrameByFrameMatcher("KNN")
     absscale = AbosluteScaleComputer()
 
-    vo = VisualOdometry(detector.detect, matcher.get_matched_keypoints, loader.cam)
+    vo = VisualOdometry(detector, matcher, loader.cam)
     for i, img in enumerate(loader):
         gt_pose = loader.get_cur_pose()
         R, t = vo.update(img, absscale.update(gt_pose))

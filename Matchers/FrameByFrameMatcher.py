@@ -69,7 +69,7 @@ class FrameByFrameMatcher(object):
             kp_cur[i, 1] = kpts["cur"][m[0].trainIdx].pt[1]
         return kp_ref, kp_cur
 
-    def get_matched_keypoints(self, kpts, desc):
+    def __call__(self, kpts, desc):
         self.match(desc)
         kp_ref, kp_cur = self.get_good_keypoints(kpts)
         return kp_ref, kp_cur
@@ -88,7 +88,7 @@ if __name__ == "__main__":
     imgs = {}
     for i, img in enumerate(loader):
         imgs["cur"] = img
-        kpts["cur"], desc["cur"] = detector.detect(img)
+        kpts["cur"], desc["cur"] = detector(img)
         if i > 1:
             good = matcher.match(desc)
             img = matcher.draw_matches(imgs, kpts)

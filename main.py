@@ -66,7 +66,7 @@ def run():
     absscale = AbosluteScaleComputer()
     traj_plotter = TrajPlotter()
 
-    vo = VisualOdometry(detector.detect, matcher.get_matched_keypoints, loader.cam)
+    vo = VisualOdometry(detector, matcher, loader.cam)
     for i, img in enumerate(loader):
         gt_pose = loader.get_cur_pose()
         R, t = vo.update(img, absscale.update(gt_pose))

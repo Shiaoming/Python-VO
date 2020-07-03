@@ -47,7 +47,7 @@ class HandcraftDetector(object):
         else:
             raise ValueError(f"Unknown feature type: {self.feature_type}")
 
-    def detect(self, image):
+    def __call__(self, image):
         if image.shape[2] == 3:
             image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
@@ -59,8 +59,8 @@ class HandcraftDetector(object):
 if __name__ == "__main__":
     img0 = cv2.imread("../test_imgs/sequences/00/image_0/000000.png")
 
-    orb_detector = HandcraftDetector("SIFT")
-    kpts, desc = orb_detector.detect(img0)
+    handcraft_detector = HandcraftDetector("SIFT")
+    kpts, desc = handcraft_detector(img0)
 
     img = None
     img = cv2.drawKeypoints(img0, kpts, img)
