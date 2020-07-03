@@ -18,7 +18,7 @@ A simple python implemented frame by frame visual odometry. This project is insp
 **Overall evaluation on KITTI sequence 00**
 ![eval](results/eval.png)
 
-**Overall relative errors on KITTI sequence 00**
+**Overall relative translation errors on KITTI sequence 00**
 
 | orb_brutematch |     sift_flannmatch | superpoint_flannmatch | superpoint_supergluematch |
 | :------------: | :-------------------: | :-------------------: | :-----------------------: |
