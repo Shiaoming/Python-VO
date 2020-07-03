@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 import glob
 from tqdm import tqdm
+import logging
 
 from utils.tools import dict_update
 from utils.PinholeCamera import PinholeCamera
@@ -17,6 +18,8 @@ class KITTILoader(object):
     def __init__(self, config=None):
         self.config = self.default_config
         self.config = dict_update(self.config, config)
+        logging.info("KITTI Dataset config: ")
+        logging.info(self.config)
 
         if self.config["sequence"] in ["00", "01", "02"]:
             self.cam = PinholeCamera(1241.0, 376.0, 718.8560, 718.8560, 607.1928, 185.2157)

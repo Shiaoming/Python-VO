@@ -102,8 +102,8 @@ if __name__ == "__main__":
     from Matchers.FrameByFrameMatcher import FrameByFrameMatcher
 
     loader = KITTILoader()
-    detector = HandcraftDetector("ORB")
-    matcher = FrameByFrameMatcher("KNN")
+    detector = HandcraftDetector({"type": "SIFT"})
+    matcher = FrameByFrameMatcher({"type": "FLANN"})
     absscale = AbosluteScaleComputer()
 
     vo = VisualOdometry(detector, matcher, loader.cam)

@@ -1,10 +1,12 @@
 import numpy as np
 import cv2
+import logging
 from utils.tools import dict_update, plot_matches
 
 
 class FrameByFrameMatcher(object):
     default_config = {
+        "type": "FLANN",
         "KNN": {
             "HAMMING": True,  # For ORB Binary descriptor, only can use hamming matching
             "first_N": 300,  # For hamming matching, use first N min matches
@@ -16,17 +18,21 @@ class FrameByFrameMatcher(object):
         "distance_ratio": 0.75
     }
 
-    def __init__(self, matcher_type="FLANN", config=None):
+    def __init__(self, config=None):
         self.config = self.default_config
         self.config = dict_update(self.config, config)
-        self.matcher_type = matcher_type
+        logging.info("Frame by frame matcher config: ")
+        logging.info(self.config)
 
-        if self.matcher_type == "KNN":
+        if self.config["type"] == "KNN":
+            logging.info("creating brutal force matcher...")
             if self.config["KNN"]["HAMMING"]:
+                logging.info("brutal force with hamming norm.")
                 self.matcher = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
             else:
                 self.matcher = cv2.BFMatcher()
-        elif self.matcher_type == "FLANN":
+        elif self.config["type"] == "FLANN":
+            logging.info("creating FLANN matcher...")
             # FLANN parameters
             FLANN_INDEX_KDTREE = 1
             index_params = dict(algorithm=FLANN_INDEX_KDTREE, trees=self.config["FLANN"]["kdTrees"])
@@ -37,7 +43,8 @@ class FrameByFrameMatcher(object):
 
     def match(self, kptdescs):
         self.good = []
-        if self.matcher_type == "KNN" and self.config["KNN"]["HAMMING"]:
+        if self.config["type"] == "KNN" and self.config["KNN"]["HAMMING"]:
+            logging.debug("KNN keypoints matching...")
             matches = self.matcher.match(kptdescs["ref"]["descriptors"], kptdescs["cur"]["descriptors"])
             # Sort them in the order of their distance.
             matches = sorted(matches, key=lambda x: x.distance)
@@ -45,6 +52,7 @@ class FrameByFrameMatcher(object):
             for i in range(self.config["KNN"]["first_N"]):
                 self.good.append([matches[i]])
         else:
+            logging.debug("FLANN keypoints matching...")
             matches = self.matcher.knnMatch(kptdescs["ref"]["descriptors"], kptdescs["cur"]["descriptors"], k=2)
             # Apply ratio test
             for m, n in matches:
@@ -53,6 +61,7 @@ class FrameByFrameMatcher(object):
         return self.good
 
     def get_good_keypoints(self, kptdescs):
+        logging.debug("getting matched keypoints...")
         kp_ref = np.zeros([len(self.good), 2])
         kp_cur = np.zeros([len(self.good), 2])
         match_score = np.zeros([len(self.good)])
@@ -78,8 +87,8 @@ if __name__ == "__main__":
     from Detectors.HandcraftDetector import HandcraftDetector
 
     loader = KITTILoader()
-    detector = HandcraftDetector("SIFT")
-    matcher = FrameByFrameMatcher("FLANN")
+    detector = HandcraftDetector({"type": "SIFT"})
+    matcher = FrameByFrameMatcher({"type": "FLANN"})
 
     kptdescs = {}
     imgs = {}

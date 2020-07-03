@@ -1,5 +1,6 @@
 from pathlib import Path
 from utils.tools import *
+import logging
 from Matchers.superglue.superglue import SuperGlue
 
 
@@ -17,6 +18,8 @@ class SuperGlueMather(object):
     def __init__(self, config=None):
         self.config = self.default_config
         self.config = dict_update(self.config, config)
+        logging.info("SuperGlue matcher config: ")
+        logging.info(self.config)
 
         self.device = 'cuda' if torch.cuda.is_available() and self.config["cuda"] else 'cpu'
 
@@ -25,10 +28,12 @@ class SuperGlueMather(object):
         path = path / 'superglue/superglue_{}.pth'.format(self.config['weights'])
         self.config["path"] = path
 
+        logging.info("creating SuperGlue matcher...")
         self.superglue = SuperGlue(self.config).to(self.device)
 
     def __call__(self, kptdescs):
         # setup data for superglue
+        logging.debug("prepare input data for superglue...")
         data = {}
         data['image_size0'] = torch.from_numpy(kptdescs["ref"]["image_size"]).float().to(self.device)
         data['image_size1'] = torch.from_numpy(kptdescs["cur"]["image_size"]).float().to(self.device)
@@ -51,6 +56,7 @@ class SuperGlueMather(object):
             data['descriptors1'] = torch.from_numpy(kptdescs["cur"]["descriptors"]).float().to(self.device).unsqueeze(0).transpose(1, 2)
 
         # Forward !!
+        logging.debug("matching keypoints with superglue...")
         pred = self.superglue(data)
 
         # get matching keypoints

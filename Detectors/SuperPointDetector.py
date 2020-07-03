@@ -1,4 +1,5 @@
 from pathlib import Path
+import logging
 from utils.tools import *
 from Detectors.superpoint.superpoint import SuperPoint
 
@@ -17,15 +18,19 @@ class SuperPointDetector(object):
     def __init__(self, config=None):
         self.config = self.default_config
         self.config = dict_update(self.config, config)
+        logging.info("SuperPoint detector config: ")
+        logging.info(self.config)
 
         self.device = 'cuda' if torch.cuda.is_available() and self.config["cuda"] else 'cpu'
 
+        logging.info("creating SuperPoint detector...")
         self.superpoint = SuperPoint(self.config).to(self.device)
 
     def __call__(self, image):
         if image.shape[2] == 3:
             image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
+        logging.debug("detecting keypoints with superpoint...")
         image_tensor = image2tensor(image, self.device)
         pred = self.superpoint({'image': image_tensor})
 

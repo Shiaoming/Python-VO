@@ -1,10 +1,12 @@
 import cv2
 import numpy as np
+import logging
 from utils.tools import dict_update, plot_keypoints
 
 
 class HandcraftDetector(object):
     default_config = {
+        "type": "SIFT",
         "ORB": {
             "nfeatures": 1000,
             "scaleFactor": 1.2,
@@ -24,12 +26,14 @@ class HandcraftDetector(object):
         }
     }
 
-    def __init__(self, feature_type="ORB", config=None):
+    def __init__(self, config=None):
         self.config = self.default_config
         self.config = dict_update(self.config, config)
-        self.feature_type = feature_type
+        logging.info("Handcraft detector config: ")
+        logging.info(self.config)
 
-        if self.feature_type == "ORB":
+        if self.config["type"] == "ORB":
+            logging.info("creating ORB detector...")
             self.det = cv2.ORB_create(nfeatures=self.config["ORB"]["nfeatures"],
                                       scaleFactor=self.config["ORB"]["scaleFactor"],
                                       nlevels=self.config["ORB"]["nLevels"],
@@ -38,7 +42,8 @@ class HandcraftDetector(object):
                                       WTA_K=self.config["ORB"]["WTA_K"],
                                       patchSize=self.config["ORB"]["patchSize"],
                                       fastThreshold=self.config["ORB"]["fastThreshold"])
-        elif self.feature_type == "SIFT":
+        elif self.config["type"] == "SIFT":
+            logging.info("creating SIFT detector...")
             self.det = cv2.xfeatures2d.SIFT_create(nfeatures=self.config["SIFT"]["nfeatures"],
                                                    nOctaveLayers=self.config["SIFT"]["nOctaveLayers"],
                                                    contrastThreshold=self.config["SIFT"]["contrastThreshold"],
@@ -46,12 +51,13 @@ class HandcraftDetector(object):
                                                    sigma=self.config["SIFT"]["sigma"]
                                                    )
         else:
-            raise ValueError(f"Unknown feature type: {self.feature_type}")
+            raise NotImplementedError(f"Not implement for feature type: {self.feature_type}")
 
     def __call__(self, image):
         if image.shape[2] == 3:
             image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
+        logging.debug("keypoint detecting and computing...")
         kpts_cv, desc = self.det.detectAndCompute(image, None)
 
         kpts = np.zeros((len(kpts_cv), 2))
@@ -70,7 +76,7 @@ class HandcraftDetector(object):
 if __name__ == "__main__":
     img0 = cv2.imread("../test_imgs/sequences/00/image_0/000000.png")
 
-    handcraft_detector = HandcraftDetector("SIFT")
+    handcraft_detector = HandcraftDetector({"type": "SIFT"})
     kptdesc = handcraft_detector(img0)
 
     img = plot_keypoints(img0, kptdesc["keypoints"], kptdesc["scores"])
