@@ -10,7 +10,8 @@ from VO.VisualOdometry import VisualOdometry, AbosluteScaleComputer
 def keypoints_plot(img, vo):
     if img.shape[2] == 1:
         img = cv2.cvtColor(img, cv2.COLOR_GRAY2RGB)
-    for p in vo.kpts["cur"]:
+    for p in vo.kptdescs["cur"]["keypoints"]:
+        # cv2.drawMarker(img, (int(p.pt[0]), int(p.pt[1])), (0, 255, 0), cv2.MARKER_CROSS)
         cv2.circle(img, (int(p.pt[0]), int(p.pt[1])), 3, (0, 255, 0))
     return img
 

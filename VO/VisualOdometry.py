@@ -27,8 +27,7 @@ class VisualOdometry(object):
         self.index = 0
 
         # keypoints and descriptors
-        self.kpts = {}
-        self.desc = {}
+        self.kptdescs = {}
 
         # pose of current frame
         self.cur_R = None
@@ -41,24 +40,22 @@ class VisualOdometry(object):
         :param absolute_scale: the absolute scale between current frame and last frame
         :return: R and t of current frame
         """
-        kpts, desc = self.detector(image)
+        kptdesc = self.detector(image)
 
         # first frame
         if self.index == 0:
             # save keypoints and descriptors
-            self.kpts["cur"] = kpts
-            self.desc["cur"] = desc
+            self.kptdescs["cur"] = kptdesc
 
             # start point
             self.cur_R = np.identity(3)
             self.cur_t = np.zeros((3, 1))
         else:
             # update keypoints and descriptors
-            self.kpts["cur"] = kpts
-            self.desc["cur"] = desc
+            self.kptdescs["cur"] = kptdesc
 
             # match keypoints
-            px_ref, px_cur = self.matcher(self.kpts, self.desc)
+            px_ref, px_cur = self.matcher(self.kptdescs)
 
             # compute relative R,t between ref and cur frame
             E, mask = cv2.findEssentialMat(px_cur, px_ref, focal=self.focal, pp=self.pp,
@@ -70,12 +67,8 @@ class VisualOdometry(object):
                 self.cur_t = self.cur_t + absolute_scale * self.cur_R.dot(t)
                 self.cur_R = R.dot(self.cur_R)
 
-            # save keypoints and descriptors
-            self.kpts["ref"] = kpts
-            self.desc["ref"] = desc
 
-        self.kpts["ref"] = self.kpts["cur"]
-        self.desc["ref"] = self.desc["cur"]
+        self.kptdescs["ref"] = self.kptdescs["cur"]
 
         self.index += 1
         return self.cur_R, self.cur_t

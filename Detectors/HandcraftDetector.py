@@ -53,16 +53,17 @@ class HandcraftDetector(object):
 
         kpts, desc = self.det.detectAndCompute(image, None)
 
-        return kpts, desc
+        return {"keypoints": kpts,
+                "descriptors": desc}
 
 
 if __name__ == "__main__":
     img0 = cv2.imread("../test_imgs/sequences/00/image_0/000000.png")
 
     handcraft_detector = HandcraftDetector("SIFT")
-    kpts, desc = handcraft_detector(img0)
+    kptdesc = handcraft_detector(img0)
 
     img = None
-    img = cv2.drawKeypoints(img0, kpts, img)
+    img = cv2.drawKeypoints(img0, kptdesc["keypoints"], img)
     cv2.imshow("SIFT", img)
     cv2.waitKey()
