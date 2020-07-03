@@ -1,5 +1,6 @@
 import cv2
-from utils.tools import dict_update
+import numpy as np
+from utils.tools import dict_update, plot_keypoints
 
 
 class HandcraftDetector(object):
@@ -51,9 +52,17 @@ class HandcraftDetector(object):
         if image.shape[2] == 3:
             image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
-        kpts, desc = self.det.detectAndCompute(image, None)
+        kpts_cv, desc = self.det.detectAndCompute(image, None)
+
+        kpts = np.zeros((len(kpts_cv), 2))
+        scores = np.zeros((len(kpts_cv)))
+        for i, p in enumerate(kpts_cv):
+            kpts[i, 0] = p.pt[0]
+            kpts[i, 1] = p.pt[1]
+            scores[i] = p.response
 
         return {"keypoints": kpts,
+                "scores": scores,
                 "descriptors": desc}
 
 
@@ -63,7 +72,6 @@ if __name__ == "__main__":
     handcraft_detector = HandcraftDetector("SIFT")
     kptdesc = handcraft_detector(img0)
 
-    img = None
-    img = cv2.drawKeypoints(img0, kptdesc["keypoints"], img)
+    img = plot_keypoints(img0, kptdesc["keypoints"], kptdesc["scores"])
     cv2.imshow("SIFT", img)
     cv2.waitKey()

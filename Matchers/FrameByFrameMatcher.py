@@ -1,6 +1,6 @@
 import numpy as np
 import cv2
-from utils.tools import dict_update
+from utils.tools import dict_update, plot_matches
 
 
 class FrameByFrameMatcher(object):
@@ -52,27 +52,25 @@ class FrameByFrameMatcher(object):
                     self.good.append([m])
         return self.good
 
-    def draw_matches(self, imgs, kptdescs):
-        img = cv2.drawMatchesKnn(imgs["ref"], kptdescs["ref"]["keypoints"],
-                                 imgs["cur"], kptdescs["cur"]["keypoints"],
-                                 self.good, None,
-                                 flags=cv2.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS)
-        return img
-
     def get_good_keypoints(self, kptdescs):
         kp_ref = np.zeros([len(self.good), 2])
         kp_cur = np.zeros([len(self.good), 2])
+        match_score = np.zeros([len(self.good)])
         for i, m in enumerate(self.good):
-            kp_ref[i, 0] = kptdescs["ref"]["keypoints"][m[0].queryIdx].pt[0]
-            kp_ref[i, 1] = kptdescs["ref"]["keypoints"][m[0].queryIdx].pt[1]
-            kp_cur[i, 0] = kptdescs["cur"]["keypoints"][m[0].trainIdx].pt[0]
-            kp_cur[i, 1] = kptdescs["cur"]["keypoints"][m[0].trainIdx].pt[1]
-        return kp_ref, kp_cur
+            kp_ref[i, :] = kptdescs["ref"]["keypoints"][m[0].queryIdx]
+            kp_cur[i, :] = kptdescs["cur"]["keypoints"][m[0].trainIdx]
+            match_score[i] = m[0].distance
+
+        ret_dict = {
+            "ref_keypoints": kp_ref,
+            "cur_keypoints": kp_cur,
+            "match_score": match_score
+        }
+        return ret_dict
 
     def __call__(self, kptdescs):
         self.match(kptdescs)
-        kp_ref, kp_cur = self.get_good_keypoints(kptdescs)
-        return kp_ref, kp_cur
+        return self.get_good_keypoints(kptdescs)
 
 
 if __name__ == "__main__":
@@ -80,8 +78,8 @@ if __name__ == "__main__":
     from Detectors.HandcraftDetector import HandcraftDetector
 
     loader = KITTILoader()
-    detector = HandcraftDetector("ORB")
-    matcher = FrameByFrameMatcher("KNN")
+    detector = HandcraftDetector("SIFT")
+    matcher = FrameByFrameMatcher("FLANN")
 
     kptdescs = {}
     imgs = {}
@@ -89,8 +87,10 @@ if __name__ == "__main__":
         imgs["cur"] = img
         kptdescs["cur"] = detector(img)
         if i > 1:
-            good = matcher(kptdescs)
-            img = matcher.draw_matches(imgs, kptdescs)
+            matches = matcher(kptdescs)
+            img = plot_matches(imgs['ref'], imgs['cur'],
+                               matches['ref_keypoints'], matches['cur_keypoints'],
+                               matches['match_score'], layout='ud')
             cv2.imshow("track", img)
             if cv2.waitKey() == 27:
                 break
