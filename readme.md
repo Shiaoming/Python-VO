@@ -24,7 +24,7 @@ For feature matchers, we tested the KNN and FLANN mathers implemented in OpenCV,
    For example, to evaluate the SuperPoint with SuperGlue, run:
    ```bash
    git clone https://github.com/Shiaoming/Python-VO.git
-   cv Python-VO
+   cd Python-VO
    python main.py --config params/kitti_superpoint_supergluematch.yaml
    ``` 
 
