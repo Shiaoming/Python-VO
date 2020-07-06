@@ -21,6 +21,17 @@ For feature matchers, we tested the KNN and FLANN mathers implemented in OpenCV,
 
 ![superpoint_keypoints](screenshots/superpoint_keypoints.png)
 
+**SIFT+FLANN Matches**
+
+![sift_flann_match](screenshots/sift_flann_match.png)
+
+**SuperPoint+FLANN Matches**
+
+![superpoint_flann_match](screenshots/superpoint_flann_match.png)
+
+**SuperPoint+SuperGlue Matches**
+
+![superpoint_superglue_match](screenshots/superpoint_superglue_match.png)
 
 ## Install
 
