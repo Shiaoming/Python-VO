@@ -53,14 +53,14 @@ def plot_keypoints(image, kpts, scores=None):
 
 
 # based on: https://github.com/magicleap/SuperGluePretrainedNetwork/blob/master/models/utils.py
-def plot_matches(image0, image1, kpts0, kpts1, scores, layout="lr"):
+def plot_matches(image0, image1, kpts0, kpts1, scores=None, layout="lr"):
     """
-    plot matches
+    plot matches between two images. If score is nor None, then red: bad match, green: good match
     :param image0: reference image
     :param image1: current image
     :param kpts0: keypoints in reference image
     :param kpts1: keypoints in current image
-    :param color: ...
+    :param scores: matching score for each keypoint pair, range [0~1], 0: worst match, 1: best match
     :param layout: 'lr': left right; 'ud': up down
     :return:
     """
@@ -83,11 +83,15 @@ def plot_matches(image0, image1, kpts0, kpts1, scores, layout="lr"):
     kpts0, kpts1 = np.round(kpts0).astype(int), np.round(kpts1).astype(int)
 
     # get color
-    smin, smax = scores.min(), scores.max()
-    scores = (scores - smin) / smax
-    color = cm.jet(scores)
-    color = (np.array(color[:, :3]) * 255).astype(int)[:, ::-1]
-    text = f"min match score: {smin}, max match score: {smax}"
+    if scores is not None:
+        smin, smax = scores.min(), scores.max()
+        assert (0 <= smin <= 1 and 0 <= smax <= 1)
+
+        color = cm.gist_rainbow(scores * 0.4)
+        color = (np.array(color[:, :3]) * 255).astype(int)[:, ::-1]
+    else:
+        color = np.zeros((kpts0.shape[0], 3), dtype=int)
+        color[:, 1] = 255
 
     for (x0, y0), (x1, y1), c in zip(kpts0, kpts1, color):
         c = c.tolist()
@@ -101,7 +105,5 @@ def plot_matches(image0, image1, kpts0, kpts1, scores, layout="lr"):
             # display line end-points as circles
             cv2.circle(out, (x0, y0), 2, c, -1, lineType=cv2.LINE_AA)
             cv2.circle(out, (x1, y1 + H0), 2, c, -1, lineType=cv2.LINE_AA)
-
-    cv2.putText(out, text, (20, 40), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1, 8)
 
     return out
