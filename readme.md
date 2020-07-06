@@ -13,9 +13,14 @@ For feature matchers, we tested the KNN and FLANN mathers implemented in OpenCV,
 - KNN, FLANN (OpenCV implementation)
 - [SuperGlue](https://github.com/magicleap/SuperGluePretrainedNetwork)
 
-**SIFT Keypoints on KITTI**
+**SIFT Keypoints**
 
 ![sift_keypoints](screenshots/sift_keypoints.png)
+
+**SuperPoint Keypoints**
+
+![superpoint_keypoints](screenshots/superpoint_keypoints.png)
+
 
 ## Install
 
