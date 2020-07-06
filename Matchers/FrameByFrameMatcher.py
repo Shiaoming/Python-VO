@@ -43,6 +43,9 @@ class FrameByFrameMatcher(object):
 
     def match(self, kptdescs):
         self.good = []
+        # get shape of the descriptor
+        self.descriptor_shape = kptdescs["ref"]["descriptors"].shape[1]
+
         if self.config["type"] == "KNN" and self.config["KNN"]["HAMMING"]:
             logging.debug("KNN keypoints matching...")
             matches = self.matcher.match(kptdescs["ref"]["descriptors"], kptdescs["cur"]["descriptors"])
@@ -58,22 +61,24 @@ class FrameByFrameMatcher(object):
             for m, n in matches:
                 if m.distance < self.config["distance_ratio"] * n.distance:
                     self.good.append([m])
+            # Sort them in the order of their distance.
+            self.good = sorted(self.good, key=lambda x: x[0].distance)
         return self.good
 
     def get_good_keypoints(self, kptdescs):
         logging.debug("getting matched keypoints...")
         kp_ref = np.zeros([len(self.good), 2])
         kp_cur = np.zeros([len(self.good), 2])
-        match_score = np.zeros([len(self.good)])
+        match_dist = np.zeros([len(self.good)])
         for i, m in enumerate(self.good):
             kp_ref[i, :] = kptdescs["ref"]["keypoints"][m[0].queryIdx]
             kp_cur[i, :] = kptdescs["cur"]["keypoints"][m[0].trainIdx]
-            match_score[i] = m[0].distance
+            match_dist[i] = m[0].distance
 
         ret_dict = {
             "ref_keypoints": kp_ref,
             "cur_keypoints": kp_cur,
-            "match_score": match_score
+            "match_score": self.normalised_matching_scores(match_dist)
         }
         return ret_dict
 
@@ -81,12 +86,40 @@ class FrameByFrameMatcher(object):
         self.match(kptdescs)
         return self.get_good_keypoints(kptdescs)
 
+    def normalised_matching_scores(self, match_dist):
+
+        if self.config["type"] == "KNN" and self.config["KNN"]["HAMMING"]:
+            # ORB Hamming distance
+            best, worst = 0, self.descriptor_shape * 8  # min and max hamming distance
+            worst = worst / 4  # scale
+        else:
+            # for non-normalized descriptor
+            if match_dist.max() > 1:
+                best, worst = 0, self.descriptor_shape * 2  # estimated range
+            else:
+                best, worst = 0, 1
+
+        # normalise the score!
+        match_scores = match_dist / worst
+        # range constraint
+        match_scores[match_scores > 1] = 1
+        match_scores[match_scores < 0] = 0
+        # 1: for best match, 0: for worst match
+        match_scores = 1 - match_scores
+
+        return match_scores
+
+    def draw_matched(self, img0, img1):
+        pass
+
 
 if __name__ == "__main__":
     from DataLoader.KITTILoader import KITTILoader
+    from DataLoader.SequenceImageLoader import SequenceImageLoader
     from Detectors.HandcraftDetector import HandcraftDetector
 
-    loader = KITTILoader()
+    # loader = KITTILoader()
+    loader = SequenceImageLoader()
     detector = HandcraftDetector({"type": "SIFT"})
     matcher = FrameByFrameMatcher({"type": "FLANN"})
 
@@ -95,11 +128,11 @@ if __name__ == "__main__":
     for i, img in enumerate(loader):
         imgs["cur"] = img
         kptdescs["cur"] = detector(img)
-        if i > 1:
+        if i >= 1:
             matches = matcher(kptdescs)
             img = plot_matches(imgs['ref'], imgs['cur'],
-                               matches['ref_keypoints'], matches['cur_keypoints'],
-                               matches['match_score'], layout='ud')
+                               matches['ref_keypoints'][0:200], matches['cur_keypoints'][0:200],
+                               matches['match_score'][0:200], layout='lr')
             cv2.imshow("track", img)
             if cv2.waitKey() == 27:
                 break
