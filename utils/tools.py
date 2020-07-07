@@ -5,25 +5,6 @@ import collections
 import matplotlib.cm as cm
 
 
-def dict_update(d, u):
-    """Improved update for nested dictionaries.
-
-    Arguments:
-        d: The dictionary to be updated.
-        u: The update dictionary.
-
-    Returns:
-        The updated dictionary.
-    """
-    if u is not None:
-        for k, v in u.items():
-            if isinstance(v, collections.Mapping):
-                d[k] = dict_update(d.get(k, {}), v)
-            else:
-                d[k] = v
-    return d
-
-
 def image2tensor(frame, device):
     return torch.from_numpy(frame / 255.).float()[None, None].to(device)
 

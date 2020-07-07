@@ -4,7 +4,6 @@ import glob
 from tqdm import tqdm
 import logging
 
-from utils.tools import dict_update
 from utils.PinholeCamera import PinholeCamera
 
 
@@ -15,9 +14,9 @@ class KITTILoader(object):
         "start": 0
     }
 
-    def __init__(self, config=None):
+    def __init__(self, config={}):
         self.config = self.default_config
-        self.config = dict_update(self.config, config)
+        self.config = {**self.config, **config}
         logging.info("KITTI Dataset config: ")
         logging.info(self.config)
 

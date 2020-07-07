@@ -18,9 +18,9 @@ class FrameByFrameMatcher(object):
         "distance_ratio": 0.75
     }
 
-    def __init__(self, config=None):
+    def __init__(self, config={}):
         self.config = self.default_config
-        self.config = dict_update(self.config, config)
+        self.config = {**self.config, **config}
         logging.info("Frame by frame matcher config: ")
         logging.info(self.config)
 

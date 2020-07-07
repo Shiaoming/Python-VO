@@ -26,9 +26,9 @@ class HandcraftDetector(object):
         }
     }
 
-    def __init__(self, config=None):
+    def __init__(self, config={}):
         self.config = self.default_config
-        self.config = dict_update(self.config, config)
+        self.config = {**self.config, **config}
         logging.info("Handcraft detector config: ")
         logging.info(self.config)
 

@@ -1,4 +1,3 @@
-
 class PinholeCamera(object):
     def __init__(self, width, height, fx, fy, cx, cy,
                  k1=0.0, k2=0.0, p1=0.0, p2=0.0, k3=0.0):
