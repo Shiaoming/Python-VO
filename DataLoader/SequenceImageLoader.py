@@ -4,8 +4,6 @@ import glob
 from tqdm import tqdm
 import logging
 
-from utils.tools import dict_update
-
 
 class SequenceImageLoader(object):
     default_config = {
