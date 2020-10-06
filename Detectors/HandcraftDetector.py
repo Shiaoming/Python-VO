@@ -48,7 +48,7 @@ class HandcraftDetector(object):
                 SIFT_create = cv2.xfeatures2d.SIFT_create
             else:
                 SIFT_create = cv2.SIFT_create
-            self.det = cv2.SIFT_create(nfeatures=self.config["SIFT"]["nfeatures"],
+            self.det = SIFT_create(nfeatures=self.config["SIFT"]["nfeatures"],
                                                    nOctaveLayers=self.config["SIFT"]["nOctaveLayers"],
                                                    contrastThreshold=self.config["SIFT"]["contrastThreshold"],
                                                    edgeThreshold=self.config["SIFT"]["edgeThreshold"],
