@@ -46,16 +46,6 @@ For feature matchers, we tested the KNN and FLANN mathers implemented in OpenCV,
     pip install -r requirements.txt
     ```
 
-- Build and install OpenCV from source with opencv-contrib and flag `OPENCV_ENABLE_NONFREE=True`
-    ```bash
-    git clone https://github.com/opencv/opencv.git
-    git clone https://github.com/opencv/opencv_contrib.git
-    cd opencv
-    mkdir build && cd build
-    cmake .. -DOPENCV_EXTRA_MODULE_PATH=../../opencv_contrib/modules -DOPENCV_ENABLE_NONFREE=True
-    make -j4 install 
-    ```
-
 ## Run
 1. edit dataset path in `params/*.yaml`;
 2. run `python main.py --config params/*.yaml` in terminal.

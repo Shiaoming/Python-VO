@@ -3,3 +3,4 @@ torch~=1.5.0
 matplotlib~=2.1.1
 PyYAML>=4.2b1
 tqdm~=4.47.0
+opencv-python~=4.4.0

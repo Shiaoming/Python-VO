@@ -44,7 +44,11 @@ class HandcraftDetector(object):
                                       fastThreshold=self.config["ORB"]["fastThreshold"])
         elif self.config["type"] == "SIFT":
             logging.info("creating SIFT detector...")
-            self.det = cv2.xfeatures2d.SIFT_create(nfeatures=self.config["SIFT"]["nfeatures"],
+            if cv2.__version__ < '4.4.0':
+                SIFT_create = cv2.xfeatures2d.SIFT_create
+            else:
+                SIFT_create = cv2.SIFT_create
+            self.det = cv2.SIFT_create(nfeatures=self.config["SIFT"]["nfeatures"],
                                                    nOctaveLayers=self.config["SIFT"]["nOctaveLayers"],
                                                    contrastThreshold=self.config["SIFT"]["contrastThreshold"],
                                                    edgeThreshold=self.config["SIFT"]["edgeThreshold"],
