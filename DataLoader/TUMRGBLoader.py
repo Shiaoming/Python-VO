@@ -30,7 +30,7 @@ class TUMRGBLoader(object):
 
         self.img_id = self.config["start"]
         self.root = self.config['root_path']
-        self.scenes_list = self.config['scenes_list']
+
 
         assert (Path(self.root).exists()), f"Dataset root path {self.root} dose not exist!"
 
@@ -92,10 +92,8 @@ class TUMRGBLoader(object):
     def __iter__(self):
         return self
     def __getitem__(self, item):
-        print("__getitem__" + str(self.img_id))
         return cv2.imread(self.imgs[item])
     def __next__(self):
-        print("__next__"+ str(self.img_id))
         if self.img_id < self.__len__():
             img = self.__getitem__(self.img_id)
 
@@ -104,7 +102,6 @@ class TUMRGBLoader(object):
             return img
         raise StopIteration()
     def __len__(self):
-        print("__len__" + str(self.img_id))
         return self.img_N - self.config["start"]
     def get_cur_pose(self):
         return self.poses[self.img_id -1]
