@@ -1,3 +1,5 @@
+import os
+
 import numpy as np
 import cv2
 import argparse
@@ -7,6 +9,7 @@ import logging
 from utils.tools import plot_keypoints
 
 from DataLoader.KITTILoader import KITTILoader
+from DataLoader.TUMRGBLoader import TUMRGBLoader
 from Detectors.HandcraftDetector import HandcraftDetector
 from Detectors.SuperPointDetector import SuperPointDetector
 from Matchers.FrameByFrameMatcher import FrameByFrameMatcher
@@ -64,6 +67,8 @@ def run(args):
     # create dataloader
     if config["dataset"]["type"] == "kitti":
         loader = KITTILoader(config["dataset"])
+    elif config["dataset"]["type"] == "tumrgb":
+        loader = TUMRGBLoader(config["dataset"])
     else:
         raise NotImplementedError
 
@@ -111,6 +116,7 @@ def run(args):
 
 
 if __name__ == "__main__":
+
     parser = argparse.ArgumentParser(description='python_vo')
     parser.add_argument('--config', type=str, default='params/kitti_superpoint_supergluematch.yaml',
                         help='config file')
