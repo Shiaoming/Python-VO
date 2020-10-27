@@ -1,6 +1,7 @@
 dataset:
   name: KITTILoader
-  root_path: /mnt/dataset_hdd/KITTI/odometry
+#  root_path: /mnt/dataset_hdd/KITTI/odometry
+  root_path: test_imgs
   sequence: '00'
   start: 0
 
