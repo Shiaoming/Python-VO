@@ -1,10 +1,11 @@
 dataset:
-  type: kitti
-  root_path: "/mnt/data/datasets/public/KITTI/KITTI/odometry"
-  sequence: "00"
+  name: KITTILoader
+  root_path: /mnt/dataset_hdd/KITTI/odometry
+  sequence: '00'
   start: 0
 
 detector:
+  name: HandcraftDetector
   type: SIFT
   SIFT:
     nfeatures: 1000
@@ -14,6 +15,7 @@ detector:
     sigma: 1.6
 
 matcher:
+  name: FrameByFrameMatcher
   type: FLANN
   FLANN:
     kdTrees: 5

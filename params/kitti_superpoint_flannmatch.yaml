@@ -1,11 +1,11 @@
 dataset:
-  type: kitti
-  root_path: "/mnt/data/datasets/public/KITTI/KITTI/odometry"
-  sequence: "00"
+  name: KITTILoader
+  root_path: /mnt/dataset_hdd/KITTI/odometry
+  sequence: '00'
   start: 0
 
 detector:
-  type: SuperPoint
+  name: SuperPointDetector
   descriptor_dim: 256
   nms_radius: 4
   keypoint_threshold: 0.005
@@ -14,6 +14,7 @@ detector:
   cuda: 1
 
 matcher:
+  name: FrameByFrameMatcher
   type: FLANN
   FLANN:
     kdTrees: 5

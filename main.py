@@ -8,12 +8,9 @@ import logging
 
 from utils.tools import plot_keypoints
 
-from DataLoader.KITTILoader import KITTILoader
-from DataLoader.TUMRGBLoader import TUMRGBLoader
-from Detectors.HandcraftDetector import HandcraftDetector
-from Detectors.SuperPointDetector import SuperPointDetector
-from Matchers.FrameByFrameMatcher import FrameByFrameMatcher
-from Matchers.SuperGlueMatcher import SuperGlueMather
+from DataLoader import create_dataloader
+from Detectors import create_detector
+from Matchers import create_matcher
 from VO.VisualOdometry import VisualOdometry, AbosluteScaleComputer
 
 
@@ -65,28 +62,11 @@ def run(args):
         config = yaml.load(f)
 
     # create dataloader
-    if config["dataset"]["type"] == "kitti":
-        loader = KITTILoader(config["dataset"])
-    elif config["dataset"]["type"] == "tumrgb":
-        loader = TUMRGBLoader(config["dataset"])
-    else:
-        raise NotImplementedError
-
+    loader = create_dataloader(config["dataset"])
     # create detector
-    if config["detector"]["type"] == "ORB" or config["detector"]["type"] == "SIFT":
-        detector = HandcraftDetector(config["detector"])
-    elif config["detector"]["type"] == "SuperPoint":
-        detector = SuperPointDetector(config["detector"])
-    else:
-        raise NotImplementedError
-
+    detector = create_detector(config["detector"])
     # create matcher
-    if config["matcher"]["type"] == "KNN" or config["matcher"]["type"] == "FLANN":
-        matcher = FrameByFrameMatcher(config["matcher"])
-    elif config["matcher"]["type"] == "SuperGlue":
-        matcher = SuperGlueMather(config["matcher"])
-    else:
-        raise NotImplementedError
+    matcher = create_matcher(config["matcher"])
 
     absscale = AbosluteScaleComputer()
     traj_plotter = TrajPlotter()
@@ -116,7 +96,6 @@ def run(args):
 
 
 if __name__ == "__main__":
-
     parser = argparse.ArgumentParser(description='python_vo')
     parser.add_argument('--config', type=str, default='params/kitti_superpoint_supergluematch.yaml',
                         help='config file')

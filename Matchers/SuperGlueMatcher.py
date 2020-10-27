@@ -4,7 +4,7 @@ import logging
 from Matchers.superglue.superglue import SuperGlue
 
 
-class SuperGlueMather(object):
+class SuperGlueMatcher(object):
     default_config = {
         "descriptor_dim": 256,
         "weights": "outdoor",
@@ -96,7 +96,7 @@ if __name__ == "__main__":
 
     loader = SequenceImageLoader()
     detector = SuperPointDetector({"cuda": 0})
-    matcher = SuperGlueMather({"cuda": 0, "weights": "indoor"})
+    matcher = SuperGlueMatcher({"cuda": 0, "weights": "indoor"})
 
     kptdescs = {}
     imgs = {}

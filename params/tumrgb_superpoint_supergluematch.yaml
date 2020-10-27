@@ -1,11 +1,11 @@
 dataset:
-  type: tumrgb
-  root_path: "/mnt/dataset_hdd/tumrgbd"
-  scene: "rgbd_dataset_freiburg1_360"
+  name: TUMRGBLoader
+  root_path: /mnt/dataset_hdd/tumrgbd
+  scene: rgbd_dataset_freiburg1_360
   start: 0
 
 detector:
-  type: SuperPoint
+  name: SuperPointDetector
   descriptor_dim: 256
   nms_radius: 4
   keypoint_threshold: 0.005
@@ -14,7 +14,7 @@ detector:
   cuda: 1
 
 matcher:
-  type: SuperGlue
+  name: SuperGlueMatcher
   descriptor_dim: 256
   weights: "outdoor"
   sinkhorn_iterations: 100
